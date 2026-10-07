@@ -156,7 +156,7 @@ jobs:
           haskell: true
           large-packages: true
           docker-images: true
-          swap-storage: true
+          swap-storage: false
 
       - name: 🛠️ Init Environment
         run: |
@@ -238,7 +238,7 @@ jobs:
             
             # 5. 开始编译
             # 使用 ccache 加速，并保留 Toolchain
-            if ! make -j$(nproc) CC="ccache gcc" CXX="ccache g++"; then
+            if ! make -j2; then
               echo "⚠️ Multi-threaded failed, retrying single-threaded..."
               make -j1 V=s || exit 1
             fi
