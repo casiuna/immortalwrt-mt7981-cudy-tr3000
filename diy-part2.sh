@@ -28,3 +28,19 @@ sed -i -e '/^IMG_PREFIX:=/i BUILD_DATE := $(shell date +%Y%m%d)' \
 
 # set ubi to 122M
 # sed -i 's/reg = <0x5c0000 0x7000000>;/reg = <0x5c0000 0x7a40000>;/' target/linux/mediatek/dts/mt7981b-cudy-tr3000-v1-ubootmod.dts
+
+# Custom Nikki dashboard
+mkdir -p files/etc/uci-defaults
+
+cat > files/etc/uci-defaults/99_nikki_custom <<'EOF'
+#!/bin/sh
+
+uci -q set nikki.mixin.ui_path='ui'
+uci -q set nikki.mixin.ui_name='zashboard-nikki'
+uci -q set nikki.mixin.ui_url='https://github.com/casiuna/zashboard/archive/refs/heads/gh-pages-nikki.zip'
+uci -q commit nikki
+
+exit 0
+EOF
+
+chmod 0755 files/etc/uci-defaults/99_nikki_custom
