@@ -29,6 +29,9 @@ sed -i -e '/^IMG_PREFIX:=/i BUILD_DATE := $(shell date +%Y%m%d)' \
 # set ubi to 122M
 # sed -i 's/reg = <0x5c0000 0x7000000>;/reg = <0x5c0000 0x7a40000>;/' target/linux/mediatek/dts/mt7981b-cudy-tr3000-v1-ubootmod.dts
 
+# Keep stable Mihomo variant for Nikki
+rm -rf package/feeds/nikki/mihomo-alpha
+
 # Custom Nikki dashboard
 mkdir -p files/etc/uci-defaults
 
