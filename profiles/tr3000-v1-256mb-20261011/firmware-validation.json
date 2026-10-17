@@ -1,0 +1,44 @@
+{
+  "filename": "immortalwrt-mediatek-filogic-20261011-cudy_tr3000-v1-256mb-squashfs-sysupgrade.bin",
+  "bytes": 43326286,
+  "sha256": "8b79a12afa81fc82bbd4752710a52c5bca3ff4a401e584ca7e9f1a67a373f3f8",
+  "CONTROL": "BOARD=cudy_tr3000-v1-256mb",
+  "control_path": "sysupgrade-cudy_tr3000-v1-256mb/CONTROL",
+  "compatible": [
+    "cudy,tr3000-v1-256mb",
+    "mediatek,mt7981"
+  ],
+  "rootfs": "squashfs",
+  "metadata": {
+    "metadata_version": "1.1",
+    "compat_version": "1.0",
+    "supported_devices": [
+      "cudy,tr3000-v1-256mb",
+      "R103",
+      "cudy,tr3000-256mb-v1"
+    ],
+    "version": {
+      "dist": "ImmortalWrt",
+      "version": "24.10-SNAPSHOT",
+      "revision": "r0-ec9ef10",
+      "target": "mediatek/filogic",
+      "board": "cudy_tr3000-v1-256mb"
+    }
+  },
+  "no_hnat_overlay": {
+    "etc/modules.d/20-mediatek_hnat": {
+      "bytes": 0,
+      "empty": true
+    },
+    "etc/modules.d/60-warp": {
+      "bytes": 0,
+      "empty": true
+    }
+  },
+  "private_identity_paths": [],
+  "root_password": "empty_or_locked",
+  "source_commit": "ec9ef10efc65da1e6d1de4e2c043c0e13d08eed8",
+  "source_branch": "openwrt-24.10-6.6",
+  "router_accessed": false,
+  "runtime_sysupgrade_test_performed": false
+}

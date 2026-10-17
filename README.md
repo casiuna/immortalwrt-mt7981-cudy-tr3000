@@ -1,3 +1,20 @@
+## Cudy TR3000 V1 256MB：2026-10-11 定制 Pre-release
+
+本项目新增已在 ROGKHB 本地编译完成的第三方 **ImmortalWrt 24.10-SNAPSHOT / Linux 6.6.133** 成品；
+源码为 [padavanonly/immortalwrt-mt798x-6.6](https://github.com/padavanonly/immortalwrt-mt798x-6.6)
+的 `openwrt-24.10-6.6` 分支，提交 `ec9ef10efc65da1e6d1de4e2c043c0e13d08eed8` 加本项目记录的本地修复。
+
+- **[固件下载及校验文件](https://github.com/casiuna/immortalwrt-mt7981-cudy-tr3000/releases/tag/tr3000-v1-256mb-20261011)**
+- 已修复 256MB 型号的 `BOARD_NAME := cudy_tr3000-v1-256mb`，实际镜像内部 BOARD 和 CONTROL 目录已离线核实。
+- SHA256：`8b79a12afa81fc82bbd4752710a52c5bca3ff4a401e584ca7e9f1a67a373f3f8`
+- [配置、No-HNAT 的实际实现、构建来源与 Actions 使用说明](profiles/tr3000-v1-256mb-20261011/README.md)
+- 新增手动构建选项 **256M-No-HNAT**；原有其他设备配置不变，后续构建自动应用板型修复并检查内部 CONTROL。
+- **仅适用于 TR3000 V1 256MB 匹配布局的 squashfs sysupgrade**，不适用于 128MB、ubootmod 或其他型号；
+  刷写有断网、配置丢失及变砖风险，应自行核实型号、布局、备份与恢复方式，不要强制绕过检查。
+- 这是第三方定制固件，非 Cudy/ImmortalWrt 官方稳定版；长期稳定性尚未确认。本次发布没有重新编译或接触运行中的路由器。
+
+---
+
 [定制教程](https://xiabee.eu.org/customize.html) | [刷写教程](https://xiabee.eu.org/install.html)
 
 <div align=center>

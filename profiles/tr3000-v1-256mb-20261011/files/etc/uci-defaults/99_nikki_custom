@@ -1,0 +1,8 @@
+#!/bin/sh
+
+uci -q set nikki.mixin.ui_path='ui'
+uci -q set nikki.mixin.ui_name='zashboard-nikki'
+uci -q set nikki.mixin.ui_url='https://github.com/casiuna/zashboard/archive/refs/heads/gh-pages-nikki.zip'
+uci -q commit nikki
+
+exit 0

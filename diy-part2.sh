@@ -10,6 +10,9 @@
 # See /LICENSE for more information.
 #
 
+# Verify/apply the 256MB BOARD_NAME repair before any image is built.
+python3 "$GITHUB_WORKSPACE/scripts/apply-tr3000-fixes.py" . || exit $?
+
 # Modify default IP
 #sed -i 's/192.168.1.1/192.168.50.5/g' package/base-files/files/bin/config_generate
 

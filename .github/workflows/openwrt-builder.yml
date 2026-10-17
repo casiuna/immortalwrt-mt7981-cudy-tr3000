@@ -15,6 +15,7 @@ on:
         default: 'all'
         options:
           - '256M'
+          - '256M-No-HNAT'
           - '128M'
           - '128M-Ubootmod'
           - 'all' 
@@ -78,12 +79,16 @@ jobs:
         working-directory: /workdir
         run: |
           git clone $REPO_URL -b $REPO_BRANCH --single-branch --filter=blob:none openwrt
+          if [ "${DEVICE_INPUT}" = "256M-No-HNAT" ]; then
+            git -C openwrt checkout "${REPO_COMMIT:-ec9ef10efc65da1e6d1de4e2c043c0e13d08eed8}"
+          fi
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
 
       - name: 🔧 Set device variables
         run: |
           case "$DEVICE_INPUT" in
             "256M") echo "CONFIG_FILE=config/256m.config" >> $GITHUB_ENV ;;
+            "256M-No-HNAT") echo "CONFIG_FILE=config/256m-20261011-no-hnat.config" >> $GITHUB_ENV ;;
             "128M") echo "CONFIG_FILE=config/128m.config" >> $GITHUB_ENV ;;
             "128M-Ubootmod") echo "CONFIG_FILE=config/128muboot.config" >> $GITHUB_ENV ;;
           esac
@@ -110,6 +115,9 @@ jobs:
           chmod +x $DIY_P2_SH
           cd openwrt
           $GITHUB_WORKSPACE/$DIY_P2_SH
+          if [ "$DEVICE_INPUT" = "256M-No-HNAT" ]; then
+            python3 "$GITHUB_WORKSPACE/scripts/apply-tr3000-fixes.py" . --no-hnat
+          fi
 
       - name: ⌨️ SSH connection to Menuconfig
         uses: owenthereal/action-upterm@v1.15.0
@@ -134,7 +142,7 @@ jobs:
           git diff --cached --quiet || (
             git commit -m "Update config: ${CONFIG_FILE}" || true
             git pull --rebase origin $CURRENT_BRANCH
-            git push -f origin HEAD:$CURRENT_BRANCH
+            git push origin HEAD:$CURRENT_BRANCH
           )
 
   build:
@@ -170,6 +178,9 @@ jobs:
         working-directory: /workdir
         run: |
           git clone $REPO_URL -b $REPO_BRANCH --single-branch --filter=blob:none openwrt
+          if [ "${DEVICE_INPUT}" = "256M-No-HNAT" ]; then
+            git -C openwrt checkout "${REPO_COMMIT:-ec9ef10efc65da1e6d1de4e2c043c0e13d08eed8}"
+          fi
           if [ -n "${REPO_COMMIT}" ]; then
             cd openwrt && git checkout ${REPO_COMMIT}
           fi
@@ -223,6 +234,7 @@ jobs:
             # 2. 设置当前设备配置文件
             case "$DEV" in
               "256M") CONFIG="config/256m.config" ;;
+              "256M-No-HNAT") CONFIG="config/256m-20261011-no-hnat.config" ;;
               "128M") CONFIG="config/128m.config" ;;
               "128M-Ubootmod") CONFIG="config/128muboot.config" ;;
             esac
@@ -231,9 +243,16 @@ jobs:
             
             # 3. 加载配置
             cp -f $GITHUB_WORKSPACE/$CONFIG .config
+            if [ "$DEV" = "256M-No-HNAT" ]; then
+              python3 "$GITHUB_WORKSPACE/scripts/apply-tr3000-fixes.py" . --no-hnat
+            fi
             
             # 4. 刷新配置并下载
             make defconfig
+            if [ "$DEV" = "256M-No-HNAT" ] && grep -qE '^CONFIG_MTK_(WHNAT_SUPPORT|WARP_V2)=[ym]$' .config; then
+              echo "No-HNAT options were unexpectedly re-enabled" >&2
+              exit 1
+            fi
             make download -j$(nproc)
             
             # 5. 开始编译
@@ -241,6 +260,16 @@ jobs:
             if ! make -j2; then
               echo "⚠️ Multi-threaded failed, retrying single-threaded..."
               make -j1 V=s || exit 1
+            fi
+
+            if [ "$DEV" = "256M" ] || [ "$DEV" = "256M-No-HNAT" ]; then
+              found=0
+              for image in bin/targets/mediatek/filogic/*cudy_tr3000-v1-256mb-squashfs-sysupgrade.bin; do
+                [ -f "$image" ] || continue
+                python3 "$GITHUB_WORKSPACE/scripts/verify-tr3000-image.py" "$image"
+                found=1
+              done
+              test "$found" = 1
             fi
 
             echo "✅ $DEV build finished."
@@ -294,7 +323,7 @@ jobs:
         with:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           body_path: release.txt
-          prerelease: ${{ env.PRERELEASE == 'true' }}
+          prerelease: ${{ env.PRERELEASE == 'true' || env.DEVICE_INPUT == '256M-No-HNAT' }}
           files: ${{ github.workspace }}/firmware_collection/*
 
       - name: 🚧 Delete old workflow runs

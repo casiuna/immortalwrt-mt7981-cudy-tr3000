@@ -1,0 +1,19 @@
+diff --git a/target/linux/mediatek/image/filogic.mk b/target/linux/mediatek/image/filogic.mk
+index 295e5a2..574a413 100644
+--- a/target/linux/mediatek/image/filogic.mk
++++ b/target/linux/mediatek/image/filogic.mk
+@@ -896,12 +896,13 @@ endef
+ TARGET_DEVICES += cudy_tr3000-v1-ubootmod
+ 
+ define Device/cudy_tr3000-v1-256mb
++  BOARD_NAME := cudy_tr3000-v1-256mb
+   DEVICE_VENDOR := Cudy
+   DEVICE_MODEL := TR3000
+   DEVICE_VARIANT := v1 256mb
+   DEVICE_DTS := mt7981b-cudy-tr3000-v1-256mb
+   DEVICE_DTS_DIR := ../dts
+-  SUPPORTED_DEVICES += R103
++  SUPPORTED_DEVICES += R103 cudy,tr3000-256mb-v1
+   UBINIZE_OPTS := -E 5
+   BLOCKSIZE := 128k
+   PAGESIZE := 2048

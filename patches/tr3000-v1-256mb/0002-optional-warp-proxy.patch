@@ -1,0 +1,18 @@
+diff --git a/package/mtk/drivers/mt_wifi/Makefile b/package/mtk/drivers/mt_wifi/Makefile
+index b8fae9a..07dde04 100644
+--- a/package/mtk/drivers/mt_wifi/Makefile
++++ b/package/mtk/drivers/mt_wifi/Makefile
+@@ -286,10 +286,10 @@ define KernelPackage/mt_wifi
+   DEPENDS:=+wifi-dats
+   DEPENDS+=+kmod-conninfra
+   DEPENDS+=+kmod-mediatek_hnat
+-  FILES:=$(PKG_BUILD_DIR)/mt_wifi_ap/mt_wifi.ko \
+-	$(PKG_BUILD_DIR)/mt_wifi/embedded/plug_in/warp_proxy/mtk_warp_proxy.ko
++FILES:=$(PKG_BUILD_DIR)/mt_wifi_ap/mt_wifi.ko
++FILES+=$(if $(filter y,$(CONFIG_MTK_WARP_V2)),$(PKG_BUILD_DIR)/mt_wifi/embedded/plug_in/warp_proxy/mtk_warp_proxy.ko)
+   DEPENDS+=+kmod-warp
+-  AUTOLOAD:=$(call AutoProbe,mt_wifi mtk_warp_proxy)
++  AUTOLOAD:=$(call AutoProbe,mt_wifi $(if $(filter y,$(CONFIG_MTK_WARP_V2)),mtk_warp_proxy))
+   SUBMENU:=Drivers
+   MENU:=1
+ endef
