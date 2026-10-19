@@ -1,17 +1,19 @@
-## Cudy TR3000 V1 256MB：2026-10-11 定制 Pre-release
+## Cudy TR3000 V1 256MB · No-HNAT 定制固件
 
-本项目新增已在 ROGKHB 本地编译完成的第三方 **ImmortalWrt 24.10-SNAPSHOT / Linux 6.6.133** 成品；
-源码为 [padavanonly/immortalwrt-mt798x-6.6](https://github.com/padavanonly/immortalwrt-mt798x-6.6)
-的 `openwrt-24.10-6.6` 分支，提交 `ec9ef10efc65da1e6d1de4e2c043c0e13d08eed8` 加本项目记录的本地修复。
+面向 **Cudy TR3000 V1 256MB** 的 ImmortalWrt 24.10-SNAPSHOT 定制版本，搭载 Linux 6.6.133。2026-10-11 版本修复升级镜像内部的板型名称顺序，提供 No-HNAT 构建配置，并集成 Aurora、Bandix、Nikki/Mihomo、WireGuard 与 ZeroTier 等组件。
 
-- **[固件下载及校验文件](https://github.com/casiuna/immortalwrt-mt7981-cudy-tr3000/releases/tag/tr3000-v1-256mb-20261011)**
-- 已修复 256MB 型号的 `BOARD_NAME := cudy_tr3000-v1-256mb`，实际镜像内部 BOARD 和 CONTROL 目录已离线核实。
-- SHA256：`8b79a12afa81fc82bbd4752710a52c5bca3ff4a401e584ca7e9f1a67a373f3f8`
-- [配置、No-HNAT 的实际实现、构建来源与 Actions 使用说明](profiles/tr3000-v1-256mb-20261011/README.md)
-- 新增手动构建选项 **256M-No-HNAT**；原有其他设备配置不变，后续构建自动应用板型修复并检查内部 CONTROL。
-- **仅适用于 TR3000 V1 256MB 匹配布局的 squashfs sysupgrade**，不适用于 128MB、ubootmod 或其他型号；
-  刷写有断网、配置丢失及变砖风险，应自行核实型号、布局、备份与恢复方式，不要强制绕过检查。
-- 这是第三方定制固件，非 Cudy/ImmortalWrt 官方稳定版；长期稳定性尚未确认。本次发布没有重新编译或接触运行中的路由器。
+**[下载固件与 SHA256 校验文件](https://github.com/casiuna/immortalwrt-mt7981-cudy-tr3000/releases/tag/tr3000-v1-256mb-20261011)** · **[版本说明与构建资料](profiles/tr3000-v1-256mb-20261011/README.md)**
+
+- **板型修复：** 正确设置 `BOARD_NAME := cudy_tr3000-v1-256mb`，构建时自动应用补丁并检查镜像内部 CONTROL。
+- **No-HNAT：** 调整无线 WHNAT/WARP 和默认模块加载设置；相关依赖包仍保留，具体范围见版本说明。
+- **独立配置：** 新增 `256M-No-HNAT` 构建选项，保留其他设备的配置与现有 `all` 列表。
+- **可追溯构建：** 保存源码基线、feeds、定制软件包提交与成品 manifest。
+
+源码基于 [PadavanOnly / immortalwrt-mt798x-6.6](https://github.com/padavanonly/immortalwrt-mt798x-6.6) 的 `openwrt-24.10-6.6` 分支。此版本为第三方 **Pre-release**，长期稳定性仍待实机反馈。
+
+固件仅适用于型号和分区布局匹配的 **TR3000 V1 256MB**，不适用于 128MB、ubootmod 或其他型号。刷写前请备份并准备恢复方式。
+
+配置与工作流调整见 [PR #1](https://github.com/casiuna/immortalwrt-mt7981-cudy-tr3000/pull/1)，尚待审核合并；公开的 Release 固件可独立下载。
 
 ---
 

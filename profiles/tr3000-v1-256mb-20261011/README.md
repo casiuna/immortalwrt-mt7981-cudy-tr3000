@@ -1,55 +1,79 @@
-# TR3000 V1 256MB：2026-10-11 本地成品
+# Cudy TR3000 V1 256MB · No-HNAT 定制版
 
-这是第三方定制的 ImmortalWrt 24.10-SNAPSHOT / Linux 6.6.133 固件，长期稳定性尚未确认，以 **Pre-release** 发布。
+基于 **ImmortalWrt 24.10-SNAPSHOT / Linux 6.6.133** 的第三方定制固件，版本日期为 **2026-10-11**。本版修复 256MB 型号升级镜像中的板型名称，并提供 No-HNAT 配置及 Aurora、Bandix、Nikki/Mihomo 等定制软件组合。
 
-- 源码：[padavanonly/immortalwrt-mt798x-6.6](https://github.com/padavanonly/immortalwrt-mt798x-6.6)，分支 `openwrt-24.10-6.6`
-- 本地源码提交：`ec9ef10efc65da1e6d1de4e2c043c0e13d08eed8`，另有本目录记录的配置、覆盖文件与两个补丁。
-- 版本日期：**2026-10-11**；原产物文件的本地 mtime 是 2026-10-12 04:03:34 +08，不能用版本日期伪称具体编译完成时间。
-- [下载本次本地原始成品](https://github.com/casiuna/immortalwrt-mt7981-cudy-tr3000/releases/tag/tr3000-v1-256mb-20261011)
-- 文件：`immortalwrt-mediatek-filogic-20261011-cudy_tr3000-v1-256mb-squashfs-sysupgrade.bin`
-- 大小：**43,326,286 字节**
-- SHA256：`8b79a12afa81fc82bbd4752710a52c5bca3ff4a401e584ca7e9f1a67a373f3f8`
+**[下载固件与校验文件](https://github.com/casiuna/immortalwrt-mt7981-cudy-tr3000/releases/tag/tr3000-v1-256mb-20261011)**
 
-## 板型修复与离线验证
+当前为 Pre-release，长期运行稳定性仍待实机反馈。
 
-设备定义 `Device/cudy_tr3000-v1-256mb` 增加 `BOARD_NAME := cudy_tr3000-v1-256mb`，不是只重命名镜像。
-实际 FIT 内设备树 compatible 为 `cudy,tr3000-v1-256mb`，rootfs 魔数为 squashfs；
-tar 内存在 `sysupgrade-cudy_tr3000-v1-256mb/CONTROL`，内容为 `BOARD=cudy_tr3000-v1-256mb`。
-fwtool 提取的元数据 board 同样正确。详见 [离线验证记录](firmware-validation.json)。
+## 固件信息
 
-元数据保留 `cudy,tr3000-256mb-v1` 作为历史兼容别名；它不是本镜像内部 BOARD 或 CONTROL 目录名称。
-用户报告该成品曾通过设备端 `sysupgrade -T`；本次仅做离线检查，**没有连接设备，也没有重新执行设备端测试**。
+| 项目 | 内容 |
+| --- | --- |
+| 支持型号 | Cudy TR3000 V1 256MB |
+| 镜像类型 | squashfs sysupgrade |
+| 系统 / 内核 | ImmortalWrt 24.10-SNAPSHOT / Linux 6.6.133 |
+| 版本日期 | 2026-10-11 |
+| 文件大小 | 43,326,286 字节，约 41.32 MiB |
+| 源码分支 | `openwrt-24.10-6.6` |
+| 源码提交 | `ec9ef10efc65da1e6d1de4e2c043c0e13d08eed8` |
 
-## No-HNAT 的准确含义
+固件文件名：
 
-本地真实实现为：关闭无线 `MTK_WHNAT_SUPPORT`、`MTK_WARP_V2` 选择；按 WARP 开关条件打包和自动加载
-`mtk_warp_proxy.ko`；用零字节 `files/etc/modules.d/20-mediatek_hnat` 和 `60-warp` 覆盖自动加载项。
-两份零字节覆盖文件已从本次镜像内读取确认。
+```text
+immortalwrt-mediatek-filogic-20261011-cudy_tr3000-v1-256mb-squashfs-sysupgrade.bin
+```
 
-`kmod-mediatek_hnat`、`kmod-warp` 仍因依赖被选入，并不宣称所有 HNAT/WED 代码或软件流卸载均已移除。
-保留已安装配置可能影响实际运行状态；本次没有做设备端模块、吞吐量或长期稳定性测试。
+SHA256：
 
-定制包包含 Aurora 主题及配置、Bandix、Nikki/Mihomo、LuCI WireGuard/ZeroTier 等。
-准确版本以 [成品 manifest](packages.manifest) 为准，不在此编造默认密码或性能数据。
-四个独立包仓库提交见 [custom-packages.lock](custom-packages.lock)，feeds 提交见 [feeds.conf](feeds.conf)。
+```text
+8b79a12afa81fc82bbd4752710a52c5bca3ff4a401e584ca7e9f1a67a373f3f8
+```
 
-## 后续 Actions 兼容性
+源码来自 [padavanonly/immortalwrt-mt798x-6.6](https://github.com/padavanonly/immortalwrt-mt798x-6.6)，另含本项目保存的配置、覆盖文件和补丁。Release 附件为本地原始成品；后续重新构建不保证得到相同的二进制摘要。
 
-现有 128M、128M-Ubootmod、256M 及 `all` 的配置文件保持不变。
-新增手动设备选项 **256M-No-HNAT**，使用 `config/256m-20261011-no-hnat.config`，不会自动加入 `all`。
-新配置来自本地真实完整 .config；只把本机 ccache 绝对路径改为可移植设置，并明确写出两个禁用项。
-此选项默认使用上述源码提交（手动指定 commit 时可覆盖）、固定 feeds/定制包提交，应用两份补丁和本目录 files。
-后续构建会产生新的固件，不保证字节级重现本次历史 SHA256。
+## 板型识别修复
 
-所有设备构建都会经过仅作用于 256MB 设备定义的 BOARD_NAME 补丁；
-补丁可重复应用，若上游改动导致不匹配则失败，避免静默生成错误板型。
-No-HNAT 驱动修复和模块覆盖仅作用于新选项。它的后续 Release 强制为 Pre-release。
-本次没有启动 Actions、下载 ImmortalWrt 源码或执行任何 make 编译。
+设备树使用 `cudy,tr3000-v1-256mb`，升级镜像内部采用：
 
-手动复现的对应顺序（只供后续构建使用；本次未执行）：
+```text
+BOARD=cudy_tr3000-v1-256mb
+sysupgrade-cudy_tr3000-v1-256mb/CONTROL
+```
+
+修复在 `target/linux/mediatek/image/filogic.mk` 的设备定义中增加 `BOARD_NAME := cudy_tr3000-v1-256mb`，解决内部名称顺序错误。构建脚本自动应用补丁，并检查生成镜像的 CONTROL 和 rootfs，防止相同问题再次进入发布产物。
+
+元数据保留旧名称 `cudy,tr3000-256mb-v1` 作为历史兼容别名。离线核验还包括实际 FIT 设备树、fwtool 元数据、SHA256 与 squashfs；详见 [验证记录](firmware-validation.json)。这些检查不替代设备适配确认和长期实机验证。
+
+## No-HNAT 配置
+
+本版采用以下设置：
+
+- 关闭无线 `MTK_WHNAT_SUPPORT` 和 `MTK_WARP_V2`。
+- 根据 WARP 开关决定是否打包及自动加载 `mtk_warp_proxy.ko`。
+- 通过零字节 `20-mediatek_hnat`、`60-warp` 文件覆盖默认模块自动加载项；两项覆盖已从发布镜像中确认。
+
+`kmod-mediatek_hnat`、`kmod-warp` 等依赖包仍在镜像中，因此 No-HNAT 指上述构建与默认加载设置，而非移除所有硬件加速代码。保留升级配置时，应检查原有的加速设置；长期稳定性与性能表现仍需实机验证。
+
+## 软件与构建资料
+
+软件组合包括 Aurora 主题与配置面板、Bandix、Nikki/Mihomo、WireGuard 和 ZeroTier 等。具体包名与版本以 [成品 manifest](packages.manifest) 为准。
+
+- [定制软件包提交](custom-packages.lock)：记录四个独立软件包仓库的提交。
+- [feeds 提交](feeds.conf)：记录本次构建使用的 feeds。
+- [配置与补丁 PR #1](https://github.com/casiuna/immortalwrt-mt7981-cudy-tr3000/pull/1)：提供独立配置、源码修复及 Actions 调整。
+
+## 后续构建
+
+PR #1 在原有工作流中新增 **256M-No-HNAT** 设备选项，对应 `config/256m-20261011-no-hnat.config`。原有 128M、128M-Ubootmod、256M 配置和 `all` 列表保持不变；合并前，`main` 尚不包含这些调整。
+
+新选项默认采用本页记录的源码提交，并固定 feeds 与定制软件包提交；手动指定源码 commit 时可覆盖默认值。No-HNAT 驱动补丁和模块覆盖只用于新选项，其后续 Release 标记为 Pre-release。
+
+BOARD_NAME 补丁只修改 256MB 设备定义，现有工作流调用 DIY 脚本时会自动应用。重复执行不会叠加修改；若源码变化导致补丁无法匹配，构建会停止，供维护者检查。
+
+在已准备好的对应源码目录中，手动构建顺序如下：
 
 ```sh
-# 在已按上述分支/提交准备好的 ImmortalWrt 源码目录中：
 export GITHUB_WORKSPACE=/path/to/this-automation-repo
 export DEVICE_INPUT=256M-No-HNAT
 bash "$GITHUB_WORKSPACE/diy-part1.sh"
@@ -63,11 +87,10 @@ make download
 make
 ```
 
-## 设备范围与刷写风险
+## 设备范围
 
-仅用于 **Cudy TR3000 V1 256MB、匹配当前分区布局的 squashfs sysupgrade**。
-不是 128MB、ubootmod、其他 Cudy 型号或用于首次安装/写入 bootloader 的镜像。
-刷写可能中断网络、丢失配置或导致设备无法启动；使用者需自行核实板型、布局、备份及恢复方式。
-不要绕过设备检查或强制刷入。本任务未刷写、重启或修改运行中的路由器。
+本固件仅适用于 **Cudy TR3000 V1 256MB 且当前分区布局匹配的设备**，不适用于 128MB、ubootmod 或其他型号。sysupgrade 镜像不用于首次安装或写入 bootloader。
 
-本目录与本次 Release 均为第三方定制，非 ImmortalWrt 或 Cudy 官方稳定发行。
+刷写前请核对设备与布局、备份配置并准备恢复方式。刷写存在断网、配置丢失及无法启动的风险，不要绕过设备检查强制刷入。
+
+本项目为第三方定制版本，非 Cudy 或 ImmortalWrt 官方发行。
