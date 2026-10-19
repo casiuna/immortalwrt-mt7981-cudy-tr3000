@@ -10,11 +10,17 @@
 # See /LICENSE for more information.
 #
 
+# Opt-in historical local profile: pinned feeds and custom package revisions.
+if [ "${DEVICE_INPUT:-}" = "256M-No-HNAT" ]; then
+  bash "$GITHUB_WORKSPACE/scripts/prepare-tr3000-packages.sh" || exit $?
+  exit 0
+fi
+
 # Uncomment a feed source
 #sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
 
 # Add a feed source
-echo 'src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git;main' >> feeds.conf.default
+grep -qE '^src-git(-full)? nikki ' feeds.conf.default || echo 'src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git;main' >> feeds.conf.default
 #echo 'src-git helloworld https://github.com/fw876/helloworld' >>feeds.conf.default
 #echo 'src-git passwall https://github.com/xiaorouji/openwrt-passwall' >>feeds.conf.default
 
